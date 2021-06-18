@@ -73,10 +73,33 @@ const initialPrompt = () => {
           { name: 'name', message: 'What is the name of the department?'}
         ])
         .then((answer) => {
-          connection.query("INSERT INTO department SET ?", department, );
+          connection.query("INSERT INTO department SET ?", department, () => {
+            initialPrompt();
+          });
         });
+      break;
+      case 'VIEW_DEPARMENTS':
+        connection.query("SELECT * FROM department", (error, data) => {
+          console.table(data);
+          initialPrompt();
+        });
+      break;
+      case 'ADD_ROLE':
+        connection.query("SELECT name, id AS value FROM department", (error, departments) => {
+          inquirer.prompt([
+            { name: 'title', message: 'What is the title?'},
+            { name: 'salary', message: 'What is the Salary'},
+            { type: 'list', name: 'department_id', message: 'What is the department?', choices: departments},
+            ])
+          .then((role) => {
+            connection.query("INSERT INTO role SET ?", department, () => {
+              initialPrompt();
+            });
+          });
+        })
       break;
     }
 })  
 }
 
+initialPrompt();
