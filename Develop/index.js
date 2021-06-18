@@ -1,6 +1,8 @@
 const inquirer = require('inquirer');
+const connection = require('./connection')
 
-inquirer.prompt([
+const initialPrompt = () => {
+  inquirer.prompt([
     {
       type: "list",
       name: "choice",
@@ -65,5 +67,16 @@ inquirer.prompt([
       ]
     }
 ]).then((answer) =>{
-    console.log(answer)
-})
+    switch(answer.choice) {
+      case 'ADD_DEPARTMENT':
+        inquirer.prompt([
+          { name: 'name', message: 'What is the name of the department?'}
+        ])
+        .then((answer) => {
+          connection.query("INSERT INTO department SET ?", department, );
+        });
+      break;
+    }
+})  
+}
+
