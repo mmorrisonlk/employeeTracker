@@ -98,6 +98,41 @@ const initialPrompt = () => {
           });
         })
       break;
+      case 'VIEW_ROLES':
+        connection.query("SELECT * FROM role JOIN department ON role.department_id = department.id", (error, data) => {
+          console.table(data);
+          initialPrompt();
+        });
+      break;
+      case 'ADD_EMPLOYEE':
+        connection.query("SELECT id AS value, first_name AS name FROM employee WHERE manager_id IS NULL", (error, managers) => {
+          connection.query("SELECT id AS value, title AS name FROM role", (error, roles) => {
+            inquirer.prompt([
+              { name: 'first_name', message: 'What is their first name?'},
+              { name: 'last_name', message: 'What is their last name?'},
+              { type: 'list', name: 'role_id', message: 'What is the role id?', choices: roles},
+              { type: 'list', name: 'manager_id', message: 'What is their manager?', choices: [{ id: null, name: 'None' }].concat(managers || []) },
+              ])
+            .then((role) => {
+              connection.query("INSERT INTO employee SET ?", employee, () => {
+                initialPrompt();
+              });
+            });
+          })
+        });
+      break;
+      case 'VIEW_EMPLOYEES':
+        connection.query("SELECT employee.first_name, employee.last_name, role.title, role.salary, manager.first_name, manager.last_name FROM employee JOIN role ON employee.role_id = role.id JOIN employee AS manager ON employee.manager_id = manager.id", (error, data) => {
+          console.table(data);
+          initialPrompt();
+        });
+      break;
+      case 'UPDATE_EMPLOYEE_ROLE':
+        connection.query("SELECT employee.first_name, employee.last_name, role.title, role.salary, manager.first_name, manager.last_name FROM employee JOIN role ON employee.role_id = role.id JOIN employee AS manager ON employee.manager_id = manager.id", (error, data) => {
+          console.table(data);
+          initialPrompt();
+        });
+      break;
     }
 })  
 }
