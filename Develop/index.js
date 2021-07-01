@@ -49,13 +49,13 @@ const initialPrompt = () => {
         inquirer.prompt([
           { name: 'name', message: 'What is the name of the department?'}
         ])
-        .then((answer) => {
+        .then((department) => {
           connection.query("INSERT INTO department SET ?", department, () => {
             initialPrompt();
           });
         });
       break;
-      case 'VIEW_DEPARMENTS':
+      case 'VIEW_DEPARTMENTS':
         connection.query("SELECT * FROM department", (error, data) => {
           console.table(data);
           initialPrompt();
@@ -65,11 +65,11 @@ const initialPrompt = () => {
         connection.query("SELECT name, id AS value FROM department", (error, departments) => {
           inquirer.prompt([
             { name: 'title', message: 'What is the title?'},
-            { name: 'salary', message: 'What is the Salary'},
+            { name: 'salary', message: 'What is the Salary?'},
             { type: 'list', name: 'department_id', message: 'What is the department?', choices: departments},
             ])
           .then((role) => {
-            connection.query("INSERT INTO role SET ?", department, () => {
+            connection.query("INSERT INTO role SET ?", role, () => {
               initialPrompt();
             });
           });
@@ -90,7 +90,7 @@ const initialPrompt = () => {
               { type: 'list', name: 'role_id', message: 'What is the role id?', choices: roles},
               { type: 'list', name: 'manager_id', message: 'What is their manager?', choices: [{ id: null, name: 'None' }].concat(managers || []) },
               ])
-            .then((role) => {
+            .then((employee) => {
               connection.query("INSERT INTO employee SET ?", employee, () => {
                 initialPrompt();
               });
